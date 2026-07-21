@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BCC2 营销雷达 · Marketing Radar</title>
+  <link rel="stylesheet" href  <!-- 顶部导航 -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🎯</span>
+        <div>
+          <div class="logo-title">BCC2 营销雷达</div>
+          <div class="logo-sub">Marketing Radar</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-ghost" id="btnWatchlist" onclick="openWatchlist()">⚙️ 监控中心</button>
+        <button class="btn btn-ghost" id="btnRefresh" onclick="refreshData()">🔄 刷新</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tab 切换 -->
+  <nav class="tabs">
+    <div class="tabs-inner">
+      <button class="tab active" data-tab="hotspots">🔥 热点</button>
+      <button class="tab" data-tab="cases">📚 案例</button>
+      <button class="tab" data-tab="tracks">🎬 赛道</button>
+      <button class="tab" data-tab="ips">🎭 IP</button>
+      <button class="tab" data-tab="brands">🏢 品牌</button>
+    </div>
+  </nav>
+
+  <!-- 主内容区 -->
+  <main class="main">
+    <!-- 热点 Tab -->
+    <section class="tab-panel active" data-panel="hotspots">
+      <div class="sub-tabs">
+        <button class="sub-tab active" data-source="xhs">小红书</button>
+        <button class="sub-tab" data-source="xhs-ugc">小红书 UGC</button>
+        <button class="sub-tab" data-source="douyin">抖音</button>
+        <button class="sub-tab" data-source="weibo">微博</button>
+        <button class="sub-tab" data-source="bilibili">B站</button>
+        <button class="sub-tab" data-source="douban">豆瓣</button>
+      </div>
+      <div class="cards-grid" id="hotspotsGrid">
+        <div class="loading">加载中...</div>
+      </div>
+    </section>
+
+    <!-- 案例 Tab -->
+    <section class="tab-panel" data-panel="cases">
+      <div class="sub-tabs">
+        <button class="sub-tab active" data-source="socialbeta">SocialBeta</button>
+        <button class="sub-tab" data-source="adquan">广告门</button>
+        <button class="sub-tab" data-source="digitaling">数英</button>
+      </div>
+      <div class="cards-grid" id="casesGrid">
+        <div class="loading">加载中...</div>
+      </div>
+    </section>
+
+    <!-- 赛道 Tab -->
+    <section class="tab-panel" data-panel="tracks">
+      <div class="sub-tabs">
+        <button class="sub-tab active" data-track="all">全部</button>
+        <button class="sub-tab" data-track="drama">热剧</button>
+        <button class="sub-tab" data-track="variety">综艺</button>
+        <button class="sub-tab" data-track="shortdrama">短剧</button>
+        <button class="sub-tab" data-track="game">游戏</button>
+        <button class="sub-tab" data-track="anime">动漫</button>
+        <button class="sub-tab" data-track="meme">梗/符号</button>
+        <button class="sub-tab" data-track="event">文化事件</button>
+      </div>
+      <div class="cards-grid" id="tracksGrid">
+        <div class="empty">
+          <div class="empty-icon">🎬</div>
+          <div class="empty-title">赛道数据积累中</div>
+          <div class="empty-desc">已预置 60+ 剧综 IP,打开监控中心查看</div>
+          <button class="btn btn-primary" onclick="openWatchlist()">+ 打开监控中心</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- IP Tab -->
+    <section class="tab-panel" data-panel="ips">
+      <div class="cards-grid" id="ipsGrid">
+        <div class="empty">
+          <div class="empty-icon">🎭</div>
+          <div class="empty-title">IP 库正在初始化</div>
+          <div class="empty-desc">已预置 60+ IP,打开监控中心查看和编辑</div>
+          <button class="btn btn-primary" onclick="openWatchlist()">查看 IP 库</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 品牌 Tab -->
+    <section class="tab-panel" data-panel="brands">
+      <div class="cards-grid" id="brandsGrid">
+        <div class="empty">
+          <div class="empty-icon">🏢</div>
+          <div class="empty-title">品牌库正在初始化</div>
+          <div class="empty-desc">已预置 60+ 品牌,打开监控中心查看和编辑</div>
+          <button class="btn btn-primary" onclick="openWatchlist()">查看品牌库</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 监控中心 Modal -->
+  <div class="modal" id="watchlistModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>⚙️ 监控中心</h2>
+        <button class="modal-close" onclick="closeWatchlist()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-tabs">
+          <button class="modal-tab active" data-modal-tab="input">📝 批量输入</button>
+          <button class="modal-tab" data-modal-tab="list">📊 我的清单</button>
+        </div>
+        
+        <div class="modal-panel active" data-modal-panel="input">
+          <p class="hint">每行输入一条,支持关键词、URL、@账号,AI 会自动识别类型</p>
+          <textarea id="batchInput" placeholder="示例:&#10;Labubu&#10;暗河传&#10;https://movie.douban.com/subject/xxx/&#10;@蜜雪冰城&#10;盛夏芬德拉 短剧 2025.09"></textarea>
+          <div class="modal-actions">
+            <button class="btn btn-primary" onclick="parseAndSave()">🤖 AI 解析并入库</button>
+          </div>
+        </div>
+
+        <div class="modal-panel" data-modal-panel="list">
+          <p class="hint">当前清单共 <span id="listCount">0</span> 项</p>
+          <div id="watchList" class="watch-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div>BCC2 内容组 · Marketing Radar v0.1 · 数据仅供参考</div>
+  </footer>
+
+  /app.js
+</body>
+</html>
