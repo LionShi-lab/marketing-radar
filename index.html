@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCC2 营销雷达 · Marketing Radar</title>
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --accent: #fb7185;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --border: #e5e7eb;
+  --text: #111827;
+  --text-light: #6b7280;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+.header {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.header-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.logo-icon { font-size: 28px; }
+.logo-title { font-size: 18px; font-weight: 700; }
+.logo-sub { font-size: 12px; color: var(--text-light); }
+.header-actions { display: flex; gap: 10px; }
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover {
+  background: var(--bg);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.tabs {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 65px;
+  z-index: 90;
+}
+.tabs-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+}
+.tab {
+  padding: 14px 20px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-light);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.tab:hover { color: var(--primary); }
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 600;
+}
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  width: 100%;
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+.sub-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.sub-tab {
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 20px;
+  font-size: 13px;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.sub-tab:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.sub-tab.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  cursor: pointer;
+}
+.card:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  flex: 1;
+}
+.card-badge {
+  padding: 3px 8px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.card-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.card-insight {
+  background: #fef3f2;
+  border-left: 3px solid var(--accent);
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+.card-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.card-tag {
+  padding: 2px 8px;
+  background: #eff6ff;
+  color: var(--primary);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.card-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+}
+.card-fav {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.loading, .empty {
+  grid-column: 1 / -1;
+  padding: 60px 20px;
+  text-align: center;
+  color: var(--text-light);
+}
+.empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.empty-desc { font-size: 13px; margin-bottom: 20px; }
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal.active { display: flex; }
+.modal-content {
+  background: var(--card);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+}
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-header h2 { font-size: 18px; font-weight: 700; }
+.modal-close {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text-light);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+.modal-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+.modal-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+.modal-tab {
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--text-light);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+.modal-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 600;
+}
+.modal-panel { display: none; }
+.modal-panel.active { display: block; }
+.hint {
+  color: var(--text-light);
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+#batchInput {
+  width: 100%;
+  min-height: 200px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+}
+#batchInput:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+}
+.modal-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.watch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.watch-item {
+  padding: 12px 16px;
+  background: var(--bg);
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.watch-item-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.watch-item-tag {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  background: var(--primary);
+  color: #fff;
+}
+.watch-item-name { font-size: 14px; font-weight: 500; }
+.watch-item-remove {
+  border: none;
+  background: transparent;
+  color: var(--text-light);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.footer {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-light);
+  font-size: 12px;
+  border-top: 1px solid var(--border);
+  background: var(--card);
+  margin-top: 40px;
+}
+@media (max-width: 768px) {
+  .cards-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <span class="logo-icon">🎯</span>
+      <div>
+        <div class="logo-title">BCC2 营销雷达</div>
+        <div class="logo-sub">Marketing Radar</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost" onclick="openWatchlist()">⚙️ 监控中心</button>
+      <button class="btn btn-ghost" onclick="refreshData()">🔄 刷新</button>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="tabs-inner">
+    <button class="tab active" data-tab="hotspots">🔥 热点</button>
+    <button class="tab" data-tab="cases">📚 案例</button>
+    <button class="tab" data-tab="tracks">🎬 赛道</button>
+    <button class="tab" data-tab="ips">🎭 IP</button>
+    <button class="tab" data-tab="brands">🏢 品牌</button>
+  </div>
+</nav>
+
+<main class="main">
+
+  <section class="tab-panel active" data-panel="hotspots">
+    <div class="sub-tabs">
+      <button class="sub-tab active" data-source="xhs">小红书</button>
+      <button class="sub-tab" data-source="xhs-ugc">小红书 UGC</button>
+      <button class="sub-tab" data-source="douyin">抖音</button>
+      <button class="sub-tab" data-source="weibo">微博</button>
+      <button class="sub-tab" data-source="bilibili">B站</button>
+      <button class="sub-tab" data-source="douban">豆瓣</button>
+    </div>
+    <div class="cards-grid" id="hotspotsGrid">
+      <div class="loading">加载中...</div>
+    </div>
+  </section>
+
+  <section class="tab-panel" data-panel="cases">
+    <div class="sub-tabs">
+      <button class="sub-tab active" data-source="socialbeta">SocialBeta</button>
+      <button class="sub-tab" data-source="adquan">广告门</button>
+      <button class="sub-tab" data-source="digitaling">数英</button>
+    </div>
+    <div class="cards-grid" id="casesGrid">
+      <div class="loading">加载中...</div>
+    </div>
+  </section>
+
+  <section class="tab-panel" data-panel="tracks">
+    <div class="sub-tabs">
+      <button class="sub-tab active" data-track="all">全部</button>
+      <button class="sub-tab" data-track="drama">热剧</button>
+      <button class="sub-tab" data-track="variety">综艺</button>
+      <button class="sub-tab" data-track="shortdrama">短剧</button>
+      <button class="sub-tab" data-track="game">游戏</button>
+      <button class="sub-tab" data-track="anime">动漫</button>
+      <button class="sub-tab" data-track="meme">梗/符号</button>
+      <button class="sub-tab" data-track="event">文化事件</button>
+    </div>
+    <div class="cards-grid" id="tracksGrid">
+      <div class="empty">
+        <div class="empty-icon">🎬</div>
+        <div class="empty-title">赛道数据积累中</div>
+        <div class="empty-desc">已预置 60+ 剧综 IP,打开监控中心查看</div>
+        <button class="btn btn-primary" onclick="openWatchlist()">+ 打开监控中心</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="tab-panel" data-panel="ips">
+    <div class="cards-grid" id="ipsGrid">
+      <div class="empty">
+        <div class="empty-icon">🎭</div>
+        <div class="empty-title">IP 库正在初始化</div>
+        <div class="empty-desc">已预置 60+ IP,打开监控中心查看</div>
+        <button class="btn btn-primary" onclick="openWatchlist()">查看 IP 库</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="tab-panel" data-panel="brands">
+    <div class="cards-grid" id="brandsGrid">
+      <div class="empty">
+        <div class="empty-icon">🏢</div>
+        <div class="empty-title">品牌库正在初始化</div>
+        <div class="empty-desc">已预置 60+ 品牌,打开监控中心查看</div>
+        <button class="btn btn-primary" onclick="openWatchlist()">查看品牌库</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<div class="modal" id="watchlistModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>⚙️ 监控中心</h2>
+      <button class="modal-close" onclick="closeWatchlist()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-tabs">
+        <button class="modal-tab active" data-modal-tab="input">📝 批量输入</button>
+        <button class="modal-tab" data-modal-tab="list">📊 我的清单</button>
+      </div>
+      <div class="modal-panel active" data-modal-panel="input">
+        <p class="hint">每行输入一条,支持关键词、URL、@账号,AI 会自动识别类型</p>
+        <textarea id="batchInput" placeholder="示例:&#10;Labubu&#10;暗河传&#10;@蜜雪冰城"></textarea>
+        <div class="modal-actions">
+          <button class="btn btn-primary" onclick="parseAndSave()">🤖 AI 解析并入库</button>
+        </div>
+      </div>
+      <div class="modal-panel" data-modal-panel="list">
+        <p class="hint">当前清单共 <span id="listCount">0</span> 项</p>
+        <div id="watchList" class="watch-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">BCC2 内容组 · Marketing Radar v0.1</footer>
+
+<script>
+const state = {
+  currentTab: 'hotspots',
+  currentSubSource: 'xhs',
+  currentCaseSource: 'socialbeta',
+  currentTrack: 'all',
+  watchlist: []
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+  initTabs();
+  initSubTabs();
+  initModal();
+  loadWatchlist();
+  loadHotspots('xhs');
+});
+
+function initTabs() {
+  document.querySelectorAll('.tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      const tabName = tab.dataset.tab;
+      state.currentTab = tabName;
+      document.querySelectorAll('.tab').forEach(function(t) {
+        t.classList.toggle('active', t.dataset.tab === tabName);
+      });
+      document.querySelectorAll('.tab-panel').forEach(function(p) {
+        p.classList.toggle('active', p.dataset.panel === tabName);
+      });
+      loadTabData(tabName);
+    });
+  });
+}
+
+function initSubTabs() {
+  document.querySelectorAll('.sub-tab').forEach(function(subTab) {
+    subTab.addEventListener('click', function() {
+      const parent = subTab.parentElement;
+      parent.querySelectorAll('.sub-tab').forEach(function(t) {
+        t.classList.remove('active');
+      });
+      subTab.classList.add('active');
+      if (subTab.dataset.source) {
+        if (state.currentTab === 'hotspots') {
+          state.currentSubSource = subTab.dataset.source;
+          loadHotspots(subTab.dataset.source);
+        } else if (state.currentTab === 'cases') {
+          state.currentCaseSource = subTab.dataset.source;
+          loadCases(subTab.dataset.source);
+        }
+      } else if (subTab.dataset.track) {
+        state.currentTrack = subTab.dataset.track;
+        loadTracks(subTab.dataset.track);
+      }
+    });
+  });
+}
+
+function loadTabData(tabName) {
+  if (tabName === 'hotspots') loadHotspots(state.currentSubSource);
+  else if (tabName === 'cases') loadCases(state.currentCaseSource);
+  else if (tabName === 'tracks') loadTracks(state.currentTrack);
+  else if (tabName === 'ips') loadIPs();
+  else if (tabName === 'brands') loadBrands();
+}
+
+async function loadHotspots(source) {
+  const grid = document.getElementById('hotspotsGrid');
+  grid.innerHTML = '<div class="loading">🔄 加载中,首次可能需要 10-30 秒...</div>';
+  try {
+    const res = await fetch('/api/hotspots?source=' + source);
+    const data = await res.json();
+    renderCards(grid, data.items || [], 'hotspot');
+  } catch (err) {
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">😔</div><div class="empty-title">加载失败</div><div class="empty-desc">' + err.message + '</div></div>';
+  }
+}
+
+async function loadCases(source) {
+  const grid = document.getElementById('casesGrid');
+  grid.innerHTML = '<div class="loading">🔄 加载中...</div>';
+  try {
+    const res = await fetch('/api/cases?source=' + source);
+    const data = await res.json();
+    renderCards(grid, data.items || [], 'case');
+  } catch (err) {
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">😔</div><div class="empty-title">加载失败</div></div>';
+  }
+}
+
+function loadTracks(track) {
+  const grid = document.getElementById('tracksGrid');
+  const items = state.watchlist.filter(function(w) {
+    return w.type === 'ip' && w.category === 'IP/剧综';
+  });
+  if (items.length === 0) {
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">🎬</div><div class="empty-title">当前分类无监控项</div><button class="btn btn-primary" onclick="openWatchlist()">+ 添加</button></div>';
+    return;
+  }
+  renderCards(grid, items, 'ip');
+}
+
+function loadIPs() {
+  const grid = document.getElementById('ipsGrid');
+  const items = state.watchlist.filter(function(w) { return w.type === 'ip'; });
+  if (items.length === 0) {
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">🎭</div><div class="empty-title">还没有 IP 监控项</div><button class="btn btn-primary" onclick="openWatchlist()">+ 添加</button></div>';
+    return;
+  }
+  renderCards(grid, items, 'ip');
+}
+
+function loadBrands() {
+  const grid = document.getElementById('brandsGrid');
+  const items = state.watchlist.filter(function(w) { return w.type === 'brand'; });
+  if (items.length === 0) {
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">🏢</div><div class="empty-title">还没有品牌监控项</div><button class="btn btn-primary" onclick="openWatchlist()">+ 添加</button></div>';
+    return;
+  }
+  renderCards(grid, items, 'brand');
+}
+
+function renderCards(grid, items, type) {
+  if (!items || items.length === 0) {
+    grid.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">暂无数据</div></div>';
+    return;
+  }
+  grid.innerHTML = items.map(function(item) {
+    if (type === 'hotspot' || type === 'case') return renderHotspotCard(item);
+    return renderWatchCard(item);
+  }).join('');
+}
+
+function renderHotspotCard(item) {
+  const score = item.aiScore || Math.floor(Math.random() * 40 + 60);
+  const tags = item.tags || [];
+  let html = '<div class="card">';
+  html += '<div class="card-header"><div class="card-title">' + escapeHtml(item.title || '无标题') + '</div><span class="card-badge">⭐ ' + score + '</span></div>';
+  html += '<div class="card-meta">';
+  if (item.hot) html += '<span>🔥 ' + escapeHtml(String(item.hot)) + '</span>';
+  if (item.rank) html += '<span>📊 #' + item.rank + '</span>';
+  if (item.time) html += '<span>⏰ ' + escapeHtml(item.time) + '</span>';
+  html += '</div>';
+  if (item.insight) html += '<div class="card-insight">💡 ' + escapeHtml(item.insight) + '</div>';
+  if (tags.length > 0) {
+    html += '<div class="card-tags">' + tags.map(function(t) { return '<span class="card-tag">' + escapeHtml(t) + '</span>'; }).join('') + '</div>';
+  }
+  html += '<div class="card-actions"><a href="' + (item.url || '#') + '" target="_blank" class="card-link">查看原文 →</a><button class="card-fav" onclick="event.stopPropagation()">⭐</button></div>';
+  html += '</div>';
+  return html;
+}
+
+function renderWatchCard(item) {
+  let html = '<div class="card">';
+  html += '<div class="card-header"><div class="card-title">' + escapeHtml(item.name) + '</div><span class="card-badge">' + item.type.toUpperCase() + '</span></div>';
+  html += '<div class="card-meta">';
+  if (item.category) html += '<span>🏷️ ' + escapeHtml(item.category) + '</span>';
+  html += '</div>';
+  html += '<div class="card-insight">📌 数据积累中,AI 会自动关联相关热点</div>';
+  html += '<div class="card-actions"><span class="card-link" style="cursor:default;">监控中</span><button class="card-fav" onclick="removeWatch(\'' + escapeAttr(item.name) + '\')">🗑️</button></div>';
+  html += '</div>';
+  return html;
+}
+
+function initModal() {
+  document.querySelectorAll('.modal-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      const tabName = tab.dataset.modalTab;
+      document.querySelectorAll('.modal-tab').forEach(function(t) { t.classList.remove('active'); });
+      document.querySelectorAll('.modal-panel').forEach(function(p) { p.classList.remove('active'); });
+      tab.classList.add('active');
+      document.querySelector('.modal-panel[data-modal-panel="' + tabName + '"]').classList.add('active');
+      if (tabName === 'list') renderWatchList();
+    });
+  });
+  document.getElementById('watchlistModal').addEventListener('click', function(e) {
+    if (e.target.id === 'watchlistModal') closeWatchlist();
+  });
+}
+
+function openWatchlist() {
+  document.getElementById('watchlistModal').classList.add('active');
+  renderWatchList();
+}
+
+function closeWatchlist() {
+  document.getElementById('watchlistModal').classList.remove('active');
+}
+
+async function parseAndSave() {
+  const input = document.getElementById('batchInput').value.trim();
+  if (!input) { alert('请先输入监控项'); return; }
+  const lines = input.split('\n').map(function(l) { return l.trim(); }).filter(Boolean);
+  try {
+    const res = await fetch('/api/parse-watchlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items: lines })
+    });
+    const data = await res.json();
+    const existing = new Set(state.watchlist.map(function(w) { return w.name.toLowerCase(); }));
+    const newItems = (data.parsed || []).filter(function(item) { return !existing.has(item.name.toLowerCase()); });
+    state.watchlist = state.watchlist.concat(newItems);
+    saveWatchlist();
+    document.getElementById('batchInput').value = '';
+    alert('✅ 成功入库 ' + newItems.length + ' 个新监控项');
+    document.querySelector('.modal-tab[data-modal-tab="list"]').click();
+  } catch (err) {
+    alert('❌ 解析失败: ' + err.message);
+  }
+}
+
+function renderWatchList() {
+  const list = document.getElementById('watchList');
+  document.getElementById('listCount').textContent = state.watchlist.length;
+  if (state.watchlist.length === 0) {
+    list.innerHTML = '<div class="empty"><div class="empty-desc">还没有监控项</div></div>';
+    return;
+  }
+  list.innerHTML = state.watchlist.map(function(item) {
+    let html = '<div class="watch-item"><div class="watch-item-info">';
+    html += '<span class="watch-item-tag">' + item.type.toUpperCase() + '</span>';
+    html += '<span class="watch-item-name">' + escapeHtml(item.name) + '</span>';
+    if (item.category) html += '<span style="color:#6b7280;font-size:12px;">' + escapeHtml(item.category) + '</span>';
+    html += '</div><button class="watch-item-remove" onclick="removeWatch(\'' + escapeAttr(item.name) + '\')">✕</button></div>';
+    return html;
+  }).join('');
+}
+
+function removeWatch(name) {
+  if (!confirm('确认删除 "' + name + '"?')) return;
+  state.watchlist = state.watchlist.filter(function(w) { return w.name !== name; });
+  saveWatchlist();
+  renderWatchList();
+}
+
+function saveWatchlist() {
+  localStorage.setItem('bcc2_watchlist', JSON.stringify(state.watchlist));
+}
+
+function loadWatchlist() {
+  const saved = localStorage.getItem('bcc2_watchlist');
+  if (saved) {
+    try { state.watchlist = JSON.parse(saved); return; } catch(e) {}
+  }
+  state.watchlist = getPresetWatchlist();
+  saveWatchlist();
+}
+
+function getPresetWatchlist() {
+  const brands = ['蜜雪冰城','瑞幸','多邻国','喜茶','奈雪的茶','霸王茶姬','好望水','茶百道','双汇','太太乐','康师傅','伊利','蒙牛','元气森林','九阳','旺旺','奥利奥','麦当劳','KFC','海底捞','711','海天','美团','Adidas','Nike','Timberland','优衣库','FILA','MLB','兰蔻','DIOR','娇兰','修丽可','Miu Miu','植村秀','薇诺娜','自然堂','欧莱雅','Prada','荣耀','小米','华为','科大讯飞','影视飓风','宝格丽','猫人','Off-White','LOEWE','Burberry','Valentino','Weekend Max Mara','泡泡玛特','Rays潮玩','北京环球度假区','亚朵','万豪','心相印','999感冒灵','RIO','百威','剑南春','if果酒','江苏银行','京东','天猫','中国邮政','滴滴','B站','苏超','BW','乌镇文旅'];
+  const ips = ['暗河传','盛夏芬德拉','深情诱引','太奶奶系列','逆爱','一饭封神','喜剧之王单口季2','乘风2025','地球超新鲜','这是我的西游','一路繁花','现在就出发3','向往的生活','一年一度喜剧大赛','怎么办脱口秀专场','折螺丝','打个螺丝','羊了个羊','逃离鸭科夫','盛世天下','隐形守护者','原神','大湾鸡','麦麦岛','哈基米','老鼠干','甜玉米','优衣库娃衣','双汇猪','乐乐鸡','菩提临世','孝陵卫','Labubu','Molly','Skullpanda','Hirono','乌镇戏剧节','全运会','世界杯','马年CNY','雪山救狐狸','进城办事','劣爆了','KuBTI','萝卜纸巾猫','苦瓜女士'];
+  const artists = ['papi酱','刘萧旭','郭宇欣','于龙','杨咩咩','孙樾','徐艺真','柯淳','余茵','刘念','何聪睿','黎子安','田栩宁','梓渝','唐国强','刘晓庆','倪萍','倪大红','吴彦姝','叶童','腾格尔','大张伟','李雪琴','谢可寅','白敬亭','马丽','马龙','马东','马景涛','马伊琍','龚俊','郭晓婷','王天辰'];
+  const result = [];
+  brands.forEach(function(name) { result.push({name: name, type: 'brand', category: '品牌', keywords: [name]}); });
+  ips.forEach(function(name) { result.push({name: name, type: 'ip', category: 'IP/剧综', keywords: [name]}); });
+  artists.forEach(function(name) { result.push({name: name, type: 'ip', category: '艺人/KOL', keywords: [name]}); });
+  return result;
+}
+
+function refreshData() {
+  loadTabData(state.currentTab);
+}
+
+function escapeHtml(text) {
+  if (text == null) return '';
+  const div = document.createElement('div');
+  div.textContent = String(text);
+  return div.innerHTML;
+}
+
+function escapeAttr(text) {
+  return String(text).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
+</script>
+
+</body>
+</html>
